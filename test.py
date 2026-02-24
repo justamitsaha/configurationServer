@@ -66,3 +66,126 @@ if __name__ == "__main__":
     print("\n=========== MISSING ===========")
     for uri in missing:
         print(uri)
+
+
+
+1. Parse Login API Response
+
+-   Converts API response string → JSON object.
+    
+-   Extracts **customer ID (BP_CUSTOMER_ID)** from response.
+    
+-   Stores it into `BaseProfile` (session/user context).
+    
+
+**Goal:** attach login response data to the current user session.
+
+----------
+
+2. Initialize Digipass Flags
+
+Several flags are initialized (mostly `"N"` initially):
+
+-   `dpActiveReg` → whether Digipass registration exists
+    
+-   `dpDeviceIdMatch` → device ID match status
+    
+-   `dpUniqueIdMatch` → unique device hash match
+    
+-   `dpIsDeviceFresh` → whether device is new/fresh
+    
+
+These flags control downstream authentication behavior.
+
+----------
+
+ 3. Check Digipass Registration
+
+-   Reads token from profile/DB.
+    
+-   If token exists → user has active Digipass registration.
+    
+
+tokenFromDB != empty → dpActiveReg = Y  
+else → dpActiveReg = N
+
+----------
+
+ 4. Fetch Device Information
+
+The code retrieves:
+
+-   `deviceId` from profile
+    
+-   `uniqueIDHashFromDevice` (device fingerprint/hash)
+    
+-   `uniqueIdFromDB` (stored server value)
+    
+
+Purpose: compare **current device vs registered device**.
+
+----------
+
+5. Read Stored Device List (JSON Parsing)
+
+-   Fetches device details JSON (`DP_DEVICE_DETAILS`).
+    
+-   Deserializes JSON into:
+    
+
+DeviceList  
+ → List<DeviceDetail>
+
+Then loops through devices:
+
+if deviceId == storedDeviceId  
+ dpDeviceIdMatch = Y
+
+**Goal:** confirm login device exists in known devices.
+
+----------
+
+6. Generate & Compare Unique Device Hash
+
+-   Generates DB-side unique hash:
+    
+    dbUniqueIdHash = generateUniqueId(uniqueIdFromDB)
+    
+-   Compares with device hash sent during login.
+    
+
+if hashes match → dpUniqueIdMatch = Y  
+else → N
+
+This acts as **device fingerprint validation**.
+
+----------
+
+7. Fresh Device Detection
+
+If device hash is missing/invalid:
+
+dpIsDeviceFresh = Y
+
+Meaning login is from a new or unknown device.
+
+----------
+
+8. Feature Toggle Logic
+
+If configuration flag is enabled:
+
+isDigipassManageRemovalEnabled
+
+AND all conditions match:
+
+-   device fresh = Y
+    
+-   active registration = Y
+    
+-   deviceIdMatch = Y
+    
+-   uniqueIdMatch = Y
+    
+
+Then flags are reset (forcing removal/reset flow).
