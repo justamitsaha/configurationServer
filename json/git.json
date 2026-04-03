@@ -43,6 +43,60 @@
         "git diff --staged": "Show staged changes",
         "git blame filename": "Show who changed each line"
       }
+    },
+    {
+      "title": "Update local branch",
+      "commands": {
+        "git fetch origin --prune": "Update knowledge of local",
+        "git rebase origin/master": "Update local branch",
+        "git pull --rebase": "Update local branch"
+      }
+    },
+    {
+      "title": "Revert merged changes from feature branch",
+      "commands": {
+        "git checkout feature-branch": "Checkout feature branch",
+        "git pull --rebase": "Pull latest changes from remote",
+        "git log --oneline": "get commit history",
+        "git revert <commit1>": "Revert commit",
+        "git revert <commit2>": "Revert commit",
+        "git push origin/branchname": "Push commits to remote"
+      }
+    },
+    {
+      "title": "Amend the last commit message",
+      "commands": {
+        "git commit --amend": "Amend the last commit message",
+        "This reverts commit ebad18cf2": "Delete such lines in VIM add proper message",
+        ":wq": "Save and quit",
+        "git push --force": "Push commits to remote",
+        "git commit --amend -m \"commit message\"": "Alternative to skip vim editor",
+        " git push --force": "Push commits to remote"
+      }
+    },
+    {
+      "title": "Creating key in Git",
+      "commands": {
+        "gpg --full-generate-key": "If you DO NOT have a GPG key, create one",
+        "choose RSA, 4096 key size, Expiration , name ,email": "Make proper selection",
+        "gpg --list-secret-keys --keyid-format=long": "Then list keys:",
+        "git config --global user.signingkey <KEYID>": "Change global config",
+        "git config --global commit.gpgsign true": "Change global config",
+        "gpg --armor --export <KEYID>": "print the key",
+        "Copy from -----BEGIN PGP PUBLIC KEY BLOCK-----": "till -----END PGP PUBLIC KEY BLOCK-----",
+        "Bitbucket → Personal Settings → GPG Keys": "upload here"
+      }
+    },
+    {
+      "title": "If key exists how to sign commits",
+      "commands": {
+        "gpg --list-secret-keys --keyid-format=long": "Then list keys:",
+        "git config --global user.signingkey F440FC991CD9ED7D": "Set the key",
+        "git config --global commit.gpgsign true": "tells Git to automatically sign every commit ",
+        "git config --global gpg.program gpg": "tells Git which program to use to perform signing gpg in this case",
+        "git commit --amend --no-edit -S": "Sign any existing commit",
+        "git push": "Push commits to remote"
+      }
     }
   ]
 }
